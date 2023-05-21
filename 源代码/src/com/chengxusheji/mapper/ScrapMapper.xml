@@ -1,0 +1,49 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ScrapMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加设备报废记录 -->
+	<insert id="addScrap" parameterType="scrap">
+		insert into t_scrap(deviceObj,scrapCount,reason,scrapDate,scrapMemo) values 
+		(#{deviceObj.deviceNo},#{scrapCount},#{reason},#{scrapDate},#{scrapMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询设备报废记录 -->
+	<select id="queryScrap" resultMap="scrapMap" >
+		select t_scrap.* from t_scrap,t_device ${where} and t_scrap.deviceObj = t_device.deviceNo limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="scrapMap" type="scrap">
+        <id property="scrapId" column="scrapId" />
+        <association property="deviceObj" column="deviceObj" select="com.chengxusheji.mapper.DeviceMapper.getDevice" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有设备报废记录 -->
+	<select id="queryScrapList" resultMap="scrapMap" >
+		select t_scrap.* from t_scrap,t_device ${where} and t_scrap.deviceObj = t_device.deviceNo
+	</select>
+
+    <!-- 按照查询条件的设备报废记录数 -->
+	<select id="queryScrapCount" resultType="int">
+		select count(*) from t_scrap,t_device ${where} and t_scrap.deviceObj = t_device.deviceNo
+	</select>
+
+	<!-- 根据主键查询某个设备报废记录 -->
+	<select id="getScrap" parameterType="int" resultMap="scrapMap">
+		select * from t_scrap where t_scrap.scrapId = #{scrapId}
+	</select>
+
+	<!-- 更新设备报废记录 -->
+	<update id="updateScrap" parameterType="scrap">
+		update t_scrap set deviceObj=#{deviceObj.deviceNo},scrapCount=#{scrapCount},reason=#{reason},scrapDate=#{scrapDate},scrapMemo=#{scrapMemo} where scrapId = #{scrapId}
+	</update>
+
+	<!-- 删除设备报废记录 -->
+	<delete id="deleteScrap" parameterType="int">
+		delete from t_scrap where scrapId=#{scrapId}
+	</delete>
+
+</mapper>

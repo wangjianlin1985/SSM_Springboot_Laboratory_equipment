@@ -1,0 +1,62 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.DeviceItemMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加实验设备条目记录 -->
+	<insert id="addDeviceItem" parameterType="deviceItem">
+		insert into t_deviceItem(shiyanObj,deviceObj,deviceCount) values 
+		(#{shiyanObj.shiyanId},#{deviceObj.deviceNo},#{deviceCount})
+	</insert>
+
+	<!-- 按照查询条件分页查询实验设备条目记录 -->
+	<select id="queryDeviceItem" resultMap="deviceItemMap" >
+		select t_deviceItem.* from t_deviceItem,t_device,t_shiyan ${where} and t_deviceItem.shiyanObj = t_shiyan.shiyanId and t_deviceItem.deviceObj = t_device.deviceNo limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="deviceItemMap" type="deviceItem">
+        <id property="deviceItemId" column="deviceItemId" />
+        <association property="shiyanObj" column="shiyanObj" select="com.chengxusheji.mapper.ShiyanMapper.getShiyan" />
+        <association property="deviceObj" column="deviceObj" select="com.chengxusheji.mapper.DeviceMapper.getDevice" />
+    </resultMap>
+    
+    <!-- 按照查询条件分页查询实验设备条目记录 -->
+	<select id="zzQueryDeviceItem" resultMap="deviceItemMap" >
+		select t_deviceItem.* from t_deviceItem,t_device,t_shiyan ${where} and t_deviceItem.shiyanObj = t_shiyan.shiyanId and t_deviceItem.deviceObj = t_device.deviceNo limit #{startIndex},#{pageSize}
+	</select>
+	
+
+    <!-- 按照查询条件查询所有实验设备条目记录 -->
+	<select id="queryDeviceItemList" resultMap="deviceItemMap" >
+		select t_deviceItem.* from t_deviceItem,t_device,t_shiyan ${where} and t_deviceItem.shiyanObj = t_shiyan.shiyanId and t_deviceItem.deviceObj = t_device.deviceNo
+	</select>
+
+    <!-- 按照查询条件的实验设备条目记录数 -->
+	<select id="queryDeviceItemCount" resultType="int">
+		select count(*) from t_deviceItem,t_device,t_shiyan ${where} and t_deviceItem.shiyanObj = t_shiyan.shiyanId and t_deviceItem.deviceObj = t_device.deviceNo
+	</select>
+	
+	
+	 <!-- 按照查询条件的实验设备条目记录数 -->
+	<select id="zzQueryDeviceItemCount" resultType="int">
+		select count(*) from t_deviceItem,t_device,t_shiyan ${where} and t_deviceItem.shiyanObj = t_shiyan.shiyanId and t_deviceItem.deviceObj = t_device.deviceNo
+	</select>
+
+	<!-- 根据主键查询某个实验设备条目记录 -->
+	<select id="getDeviceItem" parameterType="int" resultMap="deviceItemMap">
+		select * from t_deviceItem where t_deviceItem.deviceItemId = #{deviceItemId}
+	</select>
+
+	<!-- 更新实验设备条目记录 -->
+	<update id="updateDeviceItem" parameterType="deviceItem">
+		update t_deviceItem set shiyanObj=#{shiyanObj.shiyanId},deviceObj=#{deviceObj.deviceNo},deviceCount=#{deviceCount} where deviceItemId = #{deviceItemId}
+	</update>
+
+	<!-- 删除实验设备条目记录 -->
+	<delete id="deleteDeviceItem" parameterType="int">
+		delete from t_deviceItem where deviceItemId=#{deviceItemId}
+	</delete>
+
+</mapper>

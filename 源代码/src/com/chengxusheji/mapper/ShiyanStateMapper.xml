@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ShiyanStateMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加实验状态记录 -->
+	<insert id="addShiyanState" parameterType="shiyanState">
+		insert into t_shiyanState(shiyanStateName) values 
+		(#{shiyanStateName})
+	</insert>
+
+	<!-- 按照查询条件分页查询实验状态记录 -->
+	<select id="queryShiyanState" resultMap="shiyanStateMap" >
+		select t_shiyanState.* from t_shiyanState ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="shiyanStateMap" type="shiyanState">
+        <id property="shiyanStateId" column="shiyanStateId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有实验状态记录 -->
+	<select id="queryShiyanStateList" resultMap="shiyanStateMap" >
+		select t_shiyanState.* from t_shiyanState ${where}
+	</select>
+
+    <!-- 按照查询条件的实验状态记录数 -->
+	<select id="queryShiyanStateCount" resultType="int">
+		select count(*) from t_shiyanState ${where}
+	</select>
+
+	<!-- 根据主键查询某个实验状态记录 -->
+	<select id="getShiyanState" parameterType="int" resultMap="shiyanStateMap">
+		select * from t_shiyanState where t_shiyanState.shiyanStateId = #{shiyanStateId}
+	</select>
+
+	<!-- 更新实验状态记录 -->
+	<update id="updateShiyanState" parameterType="shiyanState">
+		update t_shiyanState set shiyanStateName=#{shiyanStateName} where shiyanStateId = #{shiyanStateId}
+	</update>
+
+	<!-- 删除实验状态记录 -->
+	<delete id="deleteShiyanState" parameterType="int">
+		delete from t_shiyanState where shiyanStateId=#{shiyanStateId}
+	</delete>
+
+</mapper>

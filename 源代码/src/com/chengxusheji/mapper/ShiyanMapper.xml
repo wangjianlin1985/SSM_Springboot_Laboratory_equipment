@@ -1,0 +1,50 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ShiyanMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加实验记录 -->
+	<insert id="addShiyan" parameterType="shiyan">
+		insert into t_shiyan(shiyanName,shiyanTime,shiyanContent,shiyanStateObj,zuzhangObj) values 
+		(#{shiyanName},#{shiyanTime},#{shiyanContent},#{shiyanStateObj.shiyanStateId},#{zuzhangObj.account})
+	</insert>
+
+	<!-- 按照查询条件分页查询实验记录 -->
+	<select id="queryShiyan" resultMap="shiyanMap" >
+		select t_shiyan.* from t_shiyan,t_shiyanState,t_zuzhang ${where} and t_shiyan.shiyanStateObj = t_shiyanState.shiyanStateId and t_shiyan.zuzhangObj = t_zuzhang.account limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="shiyanMap" type="shiyan">
+        <id property="shiyanId" column="shiyanId" />
+        <association property="shiyanStateObj" column="shiyanStateObj" select="com.chengxusheji.mapper.ShiyanStateMapper.getShiyanState" />
+        <association property="zuzhangObj" column="zuzhangObj" select="com.chengxusheji.mapper.ZuzhangMapper.getZuzhang" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有实验记录 -->
+	<select id="queryShiyanList" resultMap="shiyanMap" >
+		select t_shiyan.* from t_shiyan,t_shiyanState,t_zuzhang ${where} and t_shiyan.shiyanStateObj = t_shiyanState.shiyanStateId and t_shiyan.zuzhangObj = t_zuzhang.account
+	</select>
+
+    <!-- 按照查询条件的实验记录数 -->
+	<select id="queryShiyanCount" resultType="int">
+		select count(*) from t_shiyan,t_shiyanState,t_zuzhang ${where} and t_shiyan.shiyanStateObj = t_shiyanState.shiyanStateId and t_shiyan.zuzhangObj = t_zuzhang.account
+	</select>
+
+	<!-- 根据主键查询某个实验记录 -->
+	<select id="getShiyan" parameterType="int" resultMap="shiyanMap">
+		select * from t_shiyan where t_shiyan.shiyanId = #{shiyanId}
+	</select>
+
+	<!-- 更新实验记录 -->
+	<update id="updateShiyan" parameterType="shiyan">
+		update t_shiyan set shiyanName=#{shiyanName},shiyanTime=#{shiyanTime},shiyanContent=#{shiyanContent},shiyanStateObj=#{shiyanStateObj.shiyanStateId},zuzhangObj=#{zuzhangObj.account} where shiyanId = #{shiyanId}
+	</update>
+
+	<!-- 删除实验记录 -->
+	<delete id="deleteShiyan" parameterType="int">
+		delete from t_shiyan where shiyanId=#{shiyanId}
+	</delete>
+
+</mapper>

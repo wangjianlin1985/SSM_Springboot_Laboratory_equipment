@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.DeviceClassMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加设备类别记录 -->
+	<insert id="addDeviceClass" parameterType="deviceClass">
+		insert into t_deviceClass(deviceClassName) values 
+		(#{deviceClassName})
+	</insert>
+
+	<!-- 按照查询条件分页查询设备类别记录 -->
+	<select id="queryDeviceClass" resultMap="deviceClassMap" >
+		select t_deviceClass.* from t_deviceClass ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="deviceClassMap" type="deviceClass">
+        <id property="deviceClassId" column="deviceClassId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有设备类别记录 -->
+	<select id="queryDeviceClassList" resultMap="deviceClassMap" >
+		select t_deviceClass.* from t_deviceClass ${where}
+	</select>
+
+    <!-- 按照查询条件的设备类别记录数 -->
+	<select id="queryDeviceClassCount" resultType="int">
+		select count(*) from t_deviceClass ${where}
+	</select>
+
+	<!-- 根据主键查询某个设备类别记录 -->
+	<select id="getDeviceClass" parameterType="int" resultMap="deviceClassMap">
+		select * from t_deviceClass where t_deviceClass.deviceClassId = #{deviceClassId}
+	</select>
+
+	<!-- 更新设备类别记录 -->
+	<update id="updateDeviceClass" parameterType="deviceClass">
+		update t_deviceClass set deviceClassName=#{deviceClassName} where deviceClassId = #{deviceClassId}
+	</update>
+
+	<!-- 删除设备类别记录 -->
+	<delete id="deleteDeviceClass" parameterType="int">
+		delete from t_deviceClass where deviceClassId=#{deviceClassId}
+	</delete>
+
+</mapper>

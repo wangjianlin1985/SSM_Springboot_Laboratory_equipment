@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ZuzhangMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加组长记录 -->
+	<insert id="addZuzhang" parameterType="zuzhang">
+		insert into t_zuzhang(account,password,name,gender,birthDate,zuzhangPhoto,telephone,email,address,regTime) values 
+		(#{account},#{password},#{name},#{gender},#{birthDate},#{zuzhangPhoto},#{telephone},#{email},#{address},#{regTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询组长记录 -->
+	<select id="queryZuzhang" resultMap="zuzhangMap" >
+		select t_zuzhang.* from t_zuzhang ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="zuzhangMap" type="zuzhang">
+        <id property="account" column="account" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有组长记录 -->
+	<select id="queryZuzhangList" resultMap="zuzhangMap" >
+		select t_zuzhang.* from t_zuzhang ${where}
+	</select>
+
+    <!-- 按照查询条件的组长记录数 -->
+	<select id="queryZuzhangCount" resultType="int">
+		select count(*) from t_zuzhang ${where}
+	</select>
+
+	<!-- 根据主键查询某个组长记录 -->
+	<select id="getZuzhang" parameterType="string" resultMap="zuzhangMap">
+		select * from t_zuzhang where t_zuzhang.account = #{account}
+	</select>
+
+	<!-- 更新组长记录 -->
+	<update id="updateZuzhang" parameterType="zuzhang">
+		update t_zuzhang set password=#{password},name=#{name},gender=#{gender},birthDate=#{birthDate},zuzhangPhoto=#{zuzhangPhoto},telephone=#{telephone},email=#{email},address=#{address},regTime=#{regTime} where account = #{account}
+	</update>
+
+	<!-- 删除组长记录 -->
+	<delete id="deleteZuzhang" parameterType="string">
+		delete from t_zuzhang where account=#{account}
+	</delete>
+
+</mapper>
